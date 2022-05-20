@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="css/bootstrap.css">
+</head>
+<body>
+    <nav class="navbar navbar-expand-md navbar-dark mb-4" style="background-color: #ff3366;">
+        <a class="navbar-brand" href="#">LibApp</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+          <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+              <a class="nav-link" href="/">Ana Sayfa <span class="sr-only">(current)</span></a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="/books">Kitaplar</a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="/rent">Kirala</a>
+              </li>
+          </ul>
+          <form class="form-inline mt-2 mt-md-0">
+            <input class="form-control mr-sm-2" type="text" placeholder="Kitap, yazar, tür ara" aria-label="Search">
+            <button class="btn btn-dark my-2 my-sm-0" type="submit">Ara</button>
+          </form>
+        </div>
+      </nav>
+    <div class="container">
+        <H1>Kütüphane Uygulaması</H1>
+        <div class="row">
+            <div class="col-12">
+              <table class="table table-light">
+                <tr>
+                  <td><input type="text" id="name" class="form-control" placeholder="Kitap İsmi"></td>
+                </tr>
+                <tr>
+                  <td><input type="text" id="author" class="form-control" placeholder="Yazar"></td>
+                </tr>
+                <tr>
+                  <td><input type="text" id="genre" class="form-control" placeholder="Tür"></td>
+                </tr>
+                <tr>
+                  <td><input type="text" id="page" class="form-control" placeholder="Sayfa"></td>
+                </tr>
+                <tr>
+                  <td><input type="text" id="amount" class="form-control" placeholder="Adet"></td>
+                </tr>
+                <tr>
+                  <td><button class="btn btn-success btn-block" id="add">Kaydet</button></td>
+                </tr>
+              </table>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script src="js/jquery-3.6.0.min.js"></script>
+<script src="js/bootstrap.js"></script>
+
+<script>
+
+  document.querySelector('#add').addEventListener('click', () => {
+    // girilen veriler alınıyor
+      let name = document.querySelector('#name').value  
+      let author = document.querySelector('#author').value  
+      let genre = document.querySelector('#genre').value  
+      let page = document.querySelector('#page').value 
+      let amount = document.querySelector('#amount').value  
+
+    // Kaydetme endpoinitine gönderiliyor
+
+      fetch('http://localhost:3000/save-book', {
+        method: 'POST',
+        headers: {
+          'Accept': 'application/json, text/plain, */*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          'name': name, 
+          'author': author,
+          'genre': genre,
+          'page': page,
+          'amount': amount
+        })
+      }).then(res => res.json())
+        .then(res => {
+          if(res.affectedRows == 1){
+            alert('Kitap başarılı bir şekilde eklendi')
+            document.querySelector('#name').value = ''
+            document.querySelector('#author').value = ''
+            document.querySelector('#genre').value = ''
+            document.querySelector('#page').value = ''
+            document.querySelector('#amount').value = ''
+          }
+          else if (res == 300){
+            alert('Bu kitaptan zaten var')
+          }
+          else if (res == 200){
+            alert('Kitap adedi Güncellendi')
+          }
+          else{
+            alert('Hata!')
+          }
+          console.log(res)
+        });
+  });
+
+
+
+</script>
+</html>
