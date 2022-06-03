@@ -14,14 +14,6 @@ var connection = mysql.createConnection({
 
 connection.connect();
 
-
-
-
-
-
-
-
-
 app.get('/', (req, res) => {
     res.sendFile('/public/index.html', {root: __dirname})
 })
@@ -45,12 +37,53 @@ app.get('/state', (req, res) => {
 
 
 app.get('/get-all-books', (req, res) => {
-    connection.query('SELECT * FROM books;', function (error, results, fields) {
+    connection.query('SELECT * FROM books WHERE deleted = 0;', function (error, results, fields) {
         if (error) throw error;
         // console.log('The solution is: ', results[0].solution);
         res.send(results)
       });
 })
+
+
+app.post('/delete/', express.json({type: '*/*'}), (req, res) => {
+    let data = req.body
+
+    let date = new Date();
+    date = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    // console.log(date)
+
+    // res.send(data)
+    connection.query(`UPDATE books SET deleted = '1', del_date='${date}' WHERE id = '${data.id}';`, function (error, results, fields) {
+        if (error) throw error;
+        res.send(results)
+      });
+})
+
+
+app.post('/auto-delete/', express.json({type: '*/*'}), (req, res) => {
+    let data = req.body
+    let date = new Date();
+    date = `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
+    // console.log(date)
+
+    // res.send(data)
+    connection.query(`UPDATE books SET deleted = '1', del_date='${date}' WHERE id = '${data.id}';`, function (error, results, fields) {
+        if (error) throw error;
+        res.send(results)
+      });
+})
+
+
+
+
+
+
+
+
+
+
+
+
 
 app.post('/save-book',express.json({type: '*/*'}), (req, res) => {
     let data = req.body
@@ -111,5 +144,6 @@ app.use(express.static(__dirname + '/public'))
 
 
 app.listen(port, () => {
+
   console.log(`Uygulama Sunucusu ${port} Portundan Çalışıyor...`)
 })

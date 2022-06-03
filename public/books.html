@@ -50,6 +50,7 @@
                         <th scope="col">Yazar</th>
                         <th scope="col">Tür</th>
                         <th scope="col">Adet</th>
+                        <th scope="col">Sil</th>
                       </tr>
                     </thead>
                     <tbody id="books">
@@ -79,20 +80,43 @@
             let books = document.querySelector('#books')
             let table = document.querySelector('#tablo')
             let html = ''
+            let sira = 1;
             res.map(item => {
                 html += `<tr>
-                        <td>${item.id}</td>
+                        <td>${sira}</td>
                         <td>${item.name}</td>
                         <td>${item.author}</td>
                         <td>${item.genre}</td>
                         <td>${item.amount}</td>
-                    </tr>`
+                        <td><button class="btn btn-danger sil" onclick="sil(${item.id})">X</button></td>
+                    </tr>`;
+                  sira++;
             });
             books.innerHTML = html
             table.style.visibility = 'visible';
-
         })
     });
+
+
+    function sil(id){
+        fetch('http://localhost:3000/delete', {
+          method: 'POST',
+          headers: {
+            'Accept': 'application/json, text/plain, */*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            'id': id, 
+          })
+        }).then(res => res.json()).then(res => {
+          if(res.affectedRows == 1){
+            alert('Silindi!')
+            location.reload();
+          }
+        })
+    }
+
+
 
 
 
